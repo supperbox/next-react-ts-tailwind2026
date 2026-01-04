@@ -1,4 +1,6 @@
 {
+  // TypeScript 编译选项（该文件允许 JSONC 注释）。
+  // 重点：paths 配置了 `@/*` 到 `src/*` 的别名，方便更清晰的导入路径。
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -8,7 +10,11 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
+    // Next.js + 现代打包器推荐使用 bundler 解析策略。
     "moduleResolution": "bundler",
+    // 显式指定类型声明的根目录，避免某些环境/编辑器状态下出现“找不到 node 类型定义”的误报。
+    // 默认情况下 TS 也会从 node_modules/@types 解析，这里属于“更明确”的配置。
+    "typeRoots": ["./node_modules/@types"],
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
@@ -19,6 +25,8 @@
       }
     ],
     "paths": {
+      // 导入别名：
+      // import x from "@/xxx" -> src/xxx
       "@/*": ["./src/*"]
     }
   },

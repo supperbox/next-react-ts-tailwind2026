@@ -1,8 +1,24 @@
+/*
+ * 全局样式入口（Tailwind v4 + shadcn/ui）
+ *
+ * 说明：
+ * - Tailwind v4 使用 `@import "tailwindcss";` 作为入口。
+ * - shadcn/ui 使用 CSS Variables 作为主题系统（colors/radius 等），并在下面的 :root/.dark 中定义。
+ * - `tw-animate-css` 提供部分组件动画基础（按需使用）。
+ */
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/*
+ * dark 变体：当上层存在 `.dark` 时，子元素可使用 `dark:` 前缀触发样式。
+ */
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Tailwind theme token 映射：将 CSS 变量映射成 Tailwind 可消费的 token。
+ * shadcn/ui 的组件样式会使用这些 token（例如 bg-background/text-foreground）。
+ */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -46,6 +62,10 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
+/*
+ * 浅色主题变量（默认）
+ * - 采用 OKLCH 颜色空间，便于更一致的视觉表现。
+ */
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -81,6 +101,7 @@
   --sidebar-ring: oklch(0.705 0.015 286.067);
 }
 
+/* 深色主题变量：当根元素加上 `.dark` 类时生效 */
 .dark {
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
@@ -116,6 +137,10 @@
 }
 
 @layer base {
+  /*
+   * 基础层：给所有元素统一 border/ring 默认值，并设置 body 的背景与前景色。
+   * 这部分是 shadcn/ui 推荐的基础样式。
+   */
   * {
     @apply border-border outline-ring/50;
   }

@@ -1,0 +1,38 @@
+---
+title: "MDX 写作指南"
+date: "2026-01-04"
+summary: "演示标题层级、目录、代码高亮与图片写法。"
+category: "指南"
+tags: ["mdx", "markdown", "toc"]
+featured: false
+---
+
+# MDX 写作指南
+
+这篇文章用于演示目录（TOC）和代码高亮。
+
+## 标题 2
+
+一些内容。
+
+### 标题 3
+
+更多内容。
+
+## 代码高亮
+
+```tsx
+type Props = { name: string };
+
+export function Hello({ name }: Props) {
+  return <div className="text-sm">Hello {name}</div>;
+}
+```
+
+## 图片
+
+在 MDX 中你可以先用普通 Markdown 图片（会渲染为 img）：
+
+![示例图片](/images/placeholder.svg)
+
+（下一步我们会提供一个 `MdxImage` 组件，让你更容易用 Next.js `Image` 做优化。）

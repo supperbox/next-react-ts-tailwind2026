@@ -2,6 +2,13 @@
 
 本文档介绍本项目中 Zustand 的定位、代码组织方式、以及推荐写法。
 
+在当前“个人博客系统”阶段：
+
+- 文章内容主链路不依赖 Zustand（内容来自本地 Markdown/MDX）
+- Zustand 适合补充“纯前端全局状态”：例如站点 UI 开关、阅读偏好、筛选条件（若不写入 URL）等
+
+博客系统整体架构见：[blog-system.md](./blog-system.md)。
+
 ## 1. Zustand 解决什么问题
 
 Zustand 主要用于“纯前端全局状态（Global Client State）”，典型场景：

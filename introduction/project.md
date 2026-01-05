@@ -4,7 +4,12 @@
 - 该文档不影响构建与运行，仅用于帮助开发人员快速理解代码组织与数据流。
 -->
 
-本项目是一个基于 Next.js（App Router）的 React 工程骨架，已完成常用工程化与数据/状态/表单方案的最小集成，方便团队在此基础上快速扩展业务。
+本项目已从“工程骨架”演进为一个 **基于 Next.js（App Router）的个人博客系统**：文章内容以本地 Markdown/MDX 文件管理，页面以静态生成（SSG）为主，并逐步完善搜索、目录、评论与 SEO 能力。
+
+建议优先阅读：
+
+- [introduction/blog-system.md](./blog-system.md)：博客系统主文档（架构/原理/演进）
+- [introduction/docs-maintenance.md](./docs-maintenance.md)：后续新增功能时的文档更新规范
 
 ## Stack
 
@@ -25,16 +30,35 @@
 
 ### 目标与边界
 
-- 目标：提供一个可直接开发的前端工程底座（路由、样式体系、组件体系、请求/缓存、状态管理、表单校验）
-- 边界：当前仅包含单页 Demo（用于展示集成方式），不包含真实后端 API、鉴权、权限路由、复杂布局等
+- 目标：提供一个可直接发布与持续迭代的博客站点（内容层、SSG、标签/归档、MDX 渲染、目录/进度条、评论、RSS 与基础 SEO）
+- 边界：不包含后台管理、鉴权、数据库；文章新增通过提交 Markdown/MDX 文件并重新构建部署实现
 
 ### 目录组织（当前实际结构）
 
-- 应用入口与路由（App Router）
-  - [src/app/layout.tsx](src/app/layout.tsx)：根布局（Server Component），负责全局样式、字体、以及 Provider 挂载
-  - [src/app/page.tsx](src/app/page.tsx)：首页（Server Component），渲染 Demo 组件
-  - [src/app/providers.tsx](src/app/providers.tsx)：全局 Provider（Client Component），目前仅包含 TanStack Query 的 QueryClientProvider
-  - [src/app/\_components/demo.tsx](src/app/_components/demo.tsx)：Demo（Client Component），演示 Zustand / React Query / RHF+Zod / shadcn/ui 的联动
+- 应用入口与站点壳（App Router）
+  - [src/app/layout.tsx](src/app/layout.tsx)：根布局（Server Component），挂载全局样式、字体、站点 Header/Footer 与 Providers
+  - [src/app/providers.tsx](src/app/providers.tsx)：全局 Providers（Client Component），包含 next-themes 与 TanStack Query Provider
+  - [src/components/site-header.tsx](../src/components/site-header.tsx)：站点导航与主题切换入口
+  - [src/components/site-footer.tsx](../src/components/site-footer.tsx)：站点页脚
+  - [src/components/theme-toggle.tsx](../src/components/theme-toggle.tsx)：深色/浅色/跟随系统切换
+- 页面（路由）
+  - [src/app/page.tsx](src/app/page.tsx)：首页（当前为站点骨架/占位）
+  - [src/app/blog/page.tsx](../src/app/blog/page.tsx)：博客列表（含客户端搜索/筛选）
+  - [src/app/blog/[slug]/page.tsx](../src/app/blog/[slug]/page.tsx)：博客详情（MDX、TOC、阅读进度、评论、JSON-LD）
+  - [src/app/tags/page.tsx](../src/app/tags/page.tsx)：标签总览
+  - [src/app/tags/[tag]/page.tsx](../src/app/tags/[tag]/page.tsx)：标签文章列表
+  - [src/app/archive/page.tsx](../src/app/archive/page.tsx)：归档
+  - [src/app/rss.xml/route.ts](../src/app/rss.xml/route.ts)：RSS 输出
+- 内容层（文章数据）
+  - [src/content/posts](../src/content/posts)：文章源文件（.md/.mdx + frontmatter）
+  - [src/lib/posts.ts](../src/lib/posts.ts)：读取/解析/聚合文章数据（tags、归档、TOC headings、reading time）
+  - [src/lib/mdx.ts](../src/lib/mdx.ts)：MDX 编译渲染管线（remark/rehype 插件）
+- 文章增强（交互）
+  - [src/components/reading-progress.tsx](../src/components/reading-progress.tsx)：阅读进度条
+  - [src/app/blog/[slug]/\_components/table-of-contents.tsx](../src/app/blog/[slug]/_components/table-of-contents.tsx)：目录与滚动高亮
+  - [src/components/giscus-comments.tsx](../src/components/giscus-comments.tsx)：评论（Giscus）
+- 工程能力演示（历史/可选保留）
+  - [src/app/\_components/demo.tsx](src/app/_components/demo.tsx)：演示 Zustand / React Query / RHF+Zod / shadcn/ui 的联动
 - 业务状态（Zustand）
   - [src/stores/counter-store.ts](src/stores/counter-store.ts)：最小 counter store 示例
 - UI 组件（shadcn/ui）
@@ -61,14 +85,14 @@
 - 作用：
   - 引入全局样式（[src/app/globals.css](src/app/globals.css)）
   - 配置字体并把字体变量挂到 body class
-  - 将全局 Provider 包裹在应用最外层（目前为 React Query）
+  - 将全局 Provider 包裹在应用最外层（主题 next-themes + React Query 等）
 
-### 首页：最小展示页
+### 首页：站点入口（当前为骨架占位）
 
 - 文件：[src/app/page.tsx](src/app/page.tsx)
 - 作用：
   - 作为 Server Component 保持渲染开销小
-  - 引入并渲染 Demo Client 组件（在真实项目中可替换为你的业务页面组件）
+  - 提供站点信息与内容入口（精选/最新/标签云将在后续与内容层对接）
 
 ### Demo：集成示例集中展示
 
@@ -171,3 +195,7 @@ npm run build
 npm run start
 npm run lint
 ```
+
+## 文档维护要求（非常重要）
+
+后续每次新增功能，都需要同步更新 `introduction/` 的文档：具体清单见 [introduction/docs-maintenance.md](./docs-maintenance.md)。

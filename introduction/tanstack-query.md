@@ -2,6 +2,13 @@
 
 本文档介绍本项目如何接入 TanStack Query（@tanstack/react-query）、推荐的数据流分层，以及在 Next.js App Router 下的注意事项。
 
+在当前“个人博客系统”阶段：
+
+- 文章内容来自本地 Markdown/MDX（SSG），主链路不依赖 TanStack Query
+- TanStack Query 仍保留为“接入真实后端数据（Server State）”的标准方案（例如：访问统计、点赞、用户数据等）
+
+博客系统整体架构见：[blog-system.md](./blog-system.md)。
+
 ## 1. TanStack Query 解决什么问题
 
 TanStack Query 主要用于“后端数据状态（Server State）”的管理：

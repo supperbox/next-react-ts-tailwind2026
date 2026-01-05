@@ -17,6 +17,19 @@
 - 首页：
   - [src/app/page.tsx](../src/app/page.tsx)
 
+本项目还包含典型的“内容型站点（博客）”路由：
+
+- 列表页：
+  - [src/app/blog/page.tsx](../src/app/blog/page.tsx)
+- 详情页（动态路由 + 静态生成）：
+  - [src/app/blog/[slug]/page.tsx](../src/app/blog/%5Bslug%5D/page.tsx)
+- 标签页（动态路由 + 静态生成）：
+  - [src/app/tags/[tag]/page.tsx](../src/app/tags/%5Btag%5D/page.tsx)
+- 归档页：
+  - [src/app/archive/page.tsx](../src/app/archive/page.tsx)
+- Route Handler（RSS）：
+  - [src/app/rss.xml/route.ts](../src/app/rss.xml/route.ts)
+
 ## 2. 文件约定（最常用）
 
 - `layout.tsx`
@@ -30,6 +43,12 @@
   - 该路由段的错误边界 UI（可选，通常为 Client Component）
 - `not-found.tsx`
   - 该路由段的 404 UI（可选）
+
+另外一个常用文件约定是 **Route Handlers**：
+
+- `route.ts`
+  - 用于实现类似 API 的端点（但依旧在 App Router 体系下）
+  - 本项目示例：RSS 输出 [src/app/rss.xml/route.ts](../src/app/rss.xml/route.ts)
 
 ## 3. Server Component 与 Client Component
 
@@ -92,15 +111,29 @@ export default function DashboardPage() {
 }
 ```
 
+## 6. 动态路由如何做静态生成（本项目博客示例）
+
+在内容型站点中，常见需求是：
+
+- URL 是动态的（例如 `/blog/[slug]`）
+- 但希望在构建期生成静态页面（SSG）
+
+本项目在 [src/app/blog/[slug]/page.tsx](../src/app/blog/%5Bslug%5D/page.tsx) 中采用：
+
+- `generateStaticParams()`：返回所有可生成的 slug
+- `export const dynamicParams = false`：限制只生成这些参数（未命中则 404）
+
+标签页 [src/app/tags/[tag]/page.tsx](../src/app/tags/%5Btag%5D/page.tsx) 同理。
+
 如果 dashboard 需要交互（hooks），则让页面或其子组件成为 Client Component。
 
-## 6. 与样式体系的关系
+## 7. 与样式体系的关系
 
 - 全局样式入口：
   - [src/app/globals.css](../src/app/globals.css)
 - 建议在 `layout.tsx` 中只引入一次全局样式
 
-## 7. 本项目的最佳实践总结
+## 8. 本项目的最佳实践总结
 
 - 页面尽量保持为 Server Component（更快、更清晰）
 - 交互与状态逻辑下沉到 Client Component

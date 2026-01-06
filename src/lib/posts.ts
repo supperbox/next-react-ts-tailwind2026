@@ -47,6 +47,7 @@ export type PostDetail = PostListItem & {
   headings: PostHeading[];
 };
 
+// process.cwd() 是 Node.js 提供的一个方法，用于获取当前工作目录（Current Working Directory，CWD）
 const POSTS_DIR = path.join(process.cwd(), "src", "content", "posts");
 
 function ensurePostsDir() {

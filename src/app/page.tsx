@@ -3,7 +3,7 @@ export default function Home() {
     <div className="mx-auto max-w-4xl px-4 py-10 space-y-10">
       <header className="space-y-3">
         <h1 className="text-3xl font-semibold tracking-tight">
-          你好，我是CoderJLW。
+          你好，我是CoderJLW
         </h1>
         <p className="text-sm text-muted-foreground">
           这里将展示个人介绍、精选文章、最新文章、分类与标签云。

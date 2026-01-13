@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "start:prod": "NODE_ENV=production node node_modules/next/dist/bin/next start",
+    "start:prod": "PORT=3102 NODE_ENV=production node node_modules/next/dist/bin/next start",
     "lint": "eslint",
     "pm2": "pm2 start ecosystem.config.js --env production",
     "blog": "pm2 start ecosystem.config.js --env production",

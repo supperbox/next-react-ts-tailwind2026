@@ -1,0 +1,78 @@
+---
+title: "项目概览：Next.js + MDX 博客系统"
+date: "2026-01-13"
+summary: "一文了解本项目的技术栈、目录结构、内容组织与常用命令。"
+category: "指南"
+tags: ["overview", "nextjs", "typescript", "tailwind", "mdx"]
+featured: true
+---
+
+# 项目概览：Next.js + MDX 博客系统
+
+这是一个基于 **Next.js 15+ App Router** 的个人博客/内容站点项目：内容使用 **MDX** 维护，提供文章列表、标签、归档、文章详情目录（TOC）、RSS 与站点地图等能力，并预留了评论（Giscus）等扩展组件。
+
+## 技术栈
+
+- **框架**：Next.js（App Router）
+- **语言**：TypeScript
+- **样式**：Tailwind CSS
+- **组件**：shadcn/ui
+- **数据请求**：TanStack Query（在全局 Provider 中挂载）
+- **状态管理**：Zustand（示例 store）
+- **表单与校验**：React Hook Form + Zod（用于需要表单的页面/组件）
+
+## 核心功能一览
+
+- **MDX 文章系统**：本地文件即内容源，适合博客与文档型站点
+- **文章列表/详情**：支持按 slug 访问文章详情
+- **标签页/标签详情**：按标签聚合文章
+- **归档页**：按时间维度浏览
+- **TOC（目录）**：在文章详情页侧边渲染目录
+- **RSS**：通过路由生成 `rss.xml`
+- **Sitemap**：通过路由生成 `sitemap.xml`
+- **评论（可选）**：集成 Giscus 组件
+
+## 目录结构（常用）
+
+- `src/app/`：路由与页面（App Router）
+  - `src/app/blog/`：博客列表与详情
+  - `src/app/tags/`：标签列表与标签详情
+  - `src/app/archive/`：归档页
+  - `src/app/rss.xml/route.ts`：RSS 输出
+  - `src/app/sitemap.ts`：站点地图
+- `src/content/posts/`：MDX 文章内容（你正在看的这篇也在这里）
+- `src/lib/`：内容解析与工具
+  - `src/lib/posts.ts`：文章数据读取/聚合（列表、标签、归档等）
+  - `src/lib/mdx.ts`：MDX 编译与渲染相关
+- `src/components/`：可复用组件
+  - `src/components/mdx-components.tsx`：MDX 渲染的组件映射
+  - `src/components/giscus-comments.tsx`：Giscus 评论
+  - `src/components/reading-progress.tsx`：阅读进度
+
+## 写作约定（MDX Frontmatter）
+
+每篇文章以 YAML Frontmatter 开头，字段示例：
+
+- `title`：标题
+- `date`：发布日期（建议 `YYYY-MM-DD`）
+- `summary`：摘要（列表页/SEO 使用）
+- `category`：分类
+- `tags`：标签数组
+- `featured`：是否置顶/推荐（若站点逻辑启用）
+
+你可以参考：
+
+- `src/content/posts/hello-world.mdx`
+- `src/content/posts/mdx-guide.mdx`
+
+## 常用命令
+
+- 开发：`npm run dev`
+- 构建：`npm run build`
+- 生产启动：`npm run start`
+
+## 下一步建议
+
+- 增加更多 MDX 组件映射（如 `Callout`、`CodeBlock`、优化图片组件等）
+- 为文章增加 `draft` 字段并在生产构建时自动过滤
+- 增强 SEO（OpenGraph、结构化数据、更多 meta）

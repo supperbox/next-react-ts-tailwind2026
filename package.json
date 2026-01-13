@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "start:prod": "NODE_ENV=production node node_modules/next/dist/bin/next start",
+    "lint": "eslint",
+    "pm2": "pm2 start ecosystem.config.js --env production",
+    "blog": "pm2 start ecosystem.config.js --env production",
+    "pm2:restart": "pm2 restart ecosystem.config.js --env production",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
+    "pm2:logs": "pm2 logs --lines 200"
   },
   "dependencies": {
     "@giscus/react": "^3.1.0",

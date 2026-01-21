@@ -14,7 +14,20 @@ import type { NextConfig } from "next";
  */
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    // 通过 Next.js 同源代理转发到 Express，避免浏览器跨域。
+    // 默认指向本机 3101；生产环境可用环境变量覆盖。
+    const target = (
+      process.env.EXPRESS_API_ORIGIN || "http://localhost:3101"
+    ).replace(/\/$/, "");
+
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${target}/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -165,3 +165,24 @@ npm run build
 npm run start
 npm run lint
 ```
+
+## 评论系统（自建后端）
+
+本项目的评论由 `express-service` 提供后端接口。
+
+- 评论无需输入昵称/邮箱：前端会在单次访问内生成并复用“热心网友####”作为匿名昵称。
+- 支持回复：回复可折叠/展开。
+
+在 `.env.local` 增加：
+
+- 推荐（同源代理，解决跨域）：
+  - `NEXT_PUBLIC_COMMENTS_API_BASE=/api`
+  - `EXPRESS_API_ORIGIN=http://localhost:3101`
+
+说明：项目已在 `next.config.ts` 配置了 `rewrites`，会把浏览器请求的 `/api/*` 代理转发到 `EXPRESS_API_ORIGIN`。
+
+如不使用代理、直接请求后端（不推荐），可设置：
+
+- `NEXT_PUBLIC_COMMENTS_API_BASE=http://localhost:3101`
+
+并确保后端启动时开启 CORS：`ENABLE_CORS=true`。

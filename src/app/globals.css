@@ -148,3 +148,89 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /*
+   * Markdown / MDX 内容样式（不依赖 @tailwindcss/typography）
+   * 目标：观感接近 VS Code 的 Markdown 预览，适配中英文混排。
+   */
+  .markdown {
+    @apply text-[16px] leading-7;
+  }
+
+  .markdown :where(p) {
+    @apply my-4;
+  }
+
+  .markdown :where(h1, h2, h3, h4, h5, h6) {
+    @apply scroll-mt-24 font-semibold tracking-tight text-foreground;
+  }
+
+  .markdown :where(h2) {
+    @apply mt-10 mb-4 text-2xl;
+  }
+
+  .markdown :where(h3) {
+    @apply mt-8 mb-3 text-xl;
+  }
+
+  .markdown :where(h4) {
+    @apply mt-6 mb-2 text-lg;
+  }
+
+  .markdown :where(a) {
+    @apply underline underline-offset-4 decoration-muted-foreground/50 hover:decoration-foreground;
+  }
+
+  .markdown :where(ul, ol) {
+    @apply my-4 pl-6;
+  }
+
+  .markdown :where(ul) {
+    @apply list-disc;
+  }
+
+  .markdown :where(ol) {
+    @apply list-decimal;
+  }
+
+  .markdown :where(li) {
+    @apply my-1;
+  }
+
+  .markdown :where(blockquote) {
+    @apply my-5 border-l-4 border-border pl-4 text-muted-foreground;
+  }
+
+  .markdown :where(hr) {
+    @apply my-8 border-border;
+  }
+
+  .markdown :where(code) {
+    @apply rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.9em];
+  }
+
+  .markdown :where(pre) {
+    @apply my-5 overflow-x-auto rounded-md border border-border bg-muted p-4;
+  }
+
+  .markdown :where(pre code) {
+    @apply border-0 bg-transparent p-0 text-[0.9em] leading-6;
+  }
+
+  .markdown :where(table) {
+    @apply my-6 w-full border-collapse text-sm;
+  }
+
+  .markdown :where(th, td) {
+    @apply border border-border px-3 py-2 align-top;
+  }
+
+  .markdown :where(th) {
+    @apply bg-muted/50 font-semibold;
+  }
+
+  .markdown :where(img) {
+    @apply my-6 rounded-md border border-border;
+  }
+}

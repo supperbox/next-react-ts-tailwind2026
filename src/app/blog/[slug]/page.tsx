@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { GiscusComments } from "@/components/giscus-comments";
+import { Comments } from "@/components/comments";
 import { ReadingProgress } from "@/components/reading-progress";
 import { renderMdx } from "@/lib/mdx";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
@@ -58,7 +58,7 @@ export default async function BlogPostPage({
   }
 
   // MDX 编译：返回的 content 是可直接渲染的 ReactNode
-  const { content } = await renderMdx(post.content);
+  const { content } = await renderMdx(post.content, { format: post.format });
 
   // 结构化数据（JSON-LD）：帮助搜索引擎理解页面是“文章”。
   const jsonLd = {
@@ -73,13 +73,13 @@ export default async function BlogPostPage({
   };
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto w-full max-w-6xl">
       <ReadingProgress />
 
-      <div className="px-4 py-10 grid gap-10 lg:grid-cols-[1fr_280px]">
+      <div className="px-4 sm:px-6 py-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
         <article className="min-w-0">
           <header className="space-y-3">
-            <h1 className="text-3xl font-semibold tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-semibold leading-tight wrap-break-word text-balance">
               {post.title}
             </h1>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
@@ -103,13 +103,11 @@ export default async function BlogPostPage({
             </div>
           </header>
 
-          <div className="prose prose-neutral dark:prose-invert mt-8 max-w-none">
-            {content}
-          </div>
+          <div className="markdown mt-8">{content}</div>
 
           <section className="mt-10 space-y-4">
             <h2 className="text-lg font-semibold">评论</h2>
-            <GiscusComments />
+            <Comments slug={slug} />
           </section>
 
           <script

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -20,9 +23,21 @@ const navItems = [
 ] as const;
 
 export function SiteHeader() {
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  const linkClassName = (href: string) =>
+    isActive(href)
+      ? "text-foreground font-medium"
+      : "text-muted-foreground hover:text-foreground transition-colors";
+
   return (
     <header className="border-b">
-      <div className="mx-auto max-w-4xl px-4 h-14 flex items-center justify-between gap-4">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6 min-w-0">
           <Link href="/" className="font-semibold truncate">
             My Blog
@@ -32,7 +47,8 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="hover:text-foreground transition-colors"
+                aria-current={isActive(item.href) ? "page" : undefined}
+                className={linkClassName(item.href)}
               >
                 {item.label}
               </Link>
@@ -46,12 +62,13 @@ export function SiteHeader() {
       </div>
 
       <nav className="sm:hidden border-t">
-        <div className="mx-auto max-w-4xl px-4 h-11 flex items-center gap-4 overflow-x-auto text-sm text-muted-foreground">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 h-11 flex items-center gap-4 overflow-x-auto text-sm">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap hover:text-foreground transition-colors"
+              aria-current={isActive(item.href) ? "page" : undefined}
+              className={"whitespace-nowrap " + linkClassName(item.href)}
             >
               {item.label}
             </Link>

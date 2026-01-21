@@ -33,6 +33,7 @@ export type PostHeading = {
 
 export type PostListItem = {
   slug: string;
+  format: "md" | "mdx";
   title: string;
   date: string;
   summary: string;
@@ -50,13 +51,23 @@ export type PostDetail = PostListItem & {
 // process.cwd() 是 Node.js 提供的一个方法，用于获取当前工作目录（Current Working Directory，CWD）
 const POSTS_DIR = path.join(process.cwd(), "src", "content", "posts");
 
+function decodeSlugParam(slug: string): string {
+  // 在某些环境/路由组合下，params 可能是 URL 编码后的字符串（包含 %xx）。
+  // 这里做一次“尽力而为”的解码，避免中文文件名无法命中。
+  try {
+    return decodeURIComponent(slug);
+  } catch {
+    return slug;
+  }
+}
+
 function ensurePostsDir() {
   // 这里使用同步 IO：
   // - 读取发生在构建期（SSG）或服务端渲染阶段，调用链短、实现简单。
   // - 未来文章数量很大时，可再演进为缓存层或异步 IO。
   if (!fs.existsSync(POSTS_DIR)) {
     throw new Error(
-      `Posts directory not found: ${POSTS_DIR}. Expected src/content/posts.`
+      `Posts directory not found: ${POSTS_DIR}. Expected src/content/posts.`,
     );
   }
 }
@@ -99,13 +110,17 @@ export function getAllPostSlugs(): string[] {
 
 export function getPostBySlug(slug: string): PostDetail {
   ensurePostsDir();
-  const mdxPath = path.join(POSTS_DIR, `${slug}.mdx`);
-  const mdPath = path.join(POSTS_DIR, `${slug}.md`);
+  const decodedSlug = decodeSlugParam(slug);
+
+  const mdxPath = path.join(POSTS_DIR, `${decodedSlug}.mdx`);
+  const mdPath = path.join(POSTS_DIR, `${decodedSlug}.md`);
 
   const filePath = fs.existsSync(mdxPath) ? mdxPath : mdPath;
   if (!fs.existsSync(filePath)) {
-    throw new Error(`Post not found for slug: ${slug}`);
+    throw new Error(`Post not found for slug: ${decodedSlug}`);
   }
+
+  const format: "md" | "mdx" = filePath.endsWith(".mdx") ? "mdx" : "md";
 
   const raw = fs.readFileSync(filePath, "utf8");
 
@@ -115,7 +130,7 @@ export function getPostBySlug(slug: string): PostDetail {
   const parsed = matter(raw);
   const data = parsed.data as Partial<PostFrontmatter>;
 
-  const title = data.title ? String(data.title) : slug;
+  const title = data.title ? String(data.title) : decodedSlug;
   const date = data.date ? String(data.date) : new Date(0).toISOString();
   const summary = data.summary ? String(data.summary) : "";
   const category = data.category ? String(data.category) : null;
@@ -132,7 +147,8 @@ export function getPostBySlug(slug: string): PostDetail {
   const headings = extractHeadings(parsed.content);
 
   return {
-    slug,
+    slug: decodedSlug,
+    format,
     title,
     date,
     summary,

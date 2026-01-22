@@ -76,7 +76,7 @@ export default async function BlogPostPage({
     <div className="mx-auto w-full max-w-6xl">
       <ReadingProgress />
 
-      <div className="px-4 sm:px-6 py-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="relative px-4 sm:px-6 py-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
         <article className="min-w-0">
           <header className="space-y-3">
             <h1 className="text-3xl sm:text-4xl font-semibold leading-tight wrap-break-word text-balance">

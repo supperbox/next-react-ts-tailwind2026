@@ -1,8 +1,11 @@
 "use client";
 
 import * as React from "react";
+import { List } from "lucide-react";
 
 import type { PostHeading } from "@/lib/posts";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   headings: PostHeading[];
@@ -22,11 +25,24 @@ type Props = {
 export function TableOfContents({ headings }: Props) {
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const [collapsed, setCollapsed] = React.useState(false);
+  const [isSmall, setIsSmall] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   React.useEffect(() => {
-    // 小屏默认折叠，避免占用首屏；大屏默认展开。
-    const isSmall = window.matchMedia("(max-width: 1023px)").matches;
-    setCollapsed(isSmall);
+    const mql = window.matchMedia("(max-width: 1023px)");
+
+    const onChange = () => {
+      const small = mql.matches;
+      setIsSmall(small);
+      // 小屏默认折叠；大屏默认展开。
+      setCollapsed(small);
+      if (!small) setMobileOpen(false);
+    };
+
+    onChange();
+
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
   }, []);
 
   React.useEffect(() => {
@@ -64,43 +80,100 @@ export function TableOfContents({ headings }: Props) {
   if (!headings.length) return null;
 
   return (
-    <aside className="lg:sticky lg:top-16 lg:self-start">
-      <div className="rounded-md border bg-card">
-        <button
-          type="button"
-          onClick={() => setCollapsed((v) => !v)}
-          aria-expanded={!collapsed}
-          className="w-full px-4 py-3 flex items-center justify-between gap-3 text-sm font-semibold"
-        >
-          <span>目录</span>
-          <span className="text-xs text-muted-foreground">
-            {collapsed ? "展开" : "收起"}
-          </span>
-        </button>
+    <aside
+      className={cn(
+        "lg:self-start lg:relative",
+        // 窄屏：把小图标放到内容容器右上角（父容器已设为 relative）
+        isSmall ? "absolute right-4 top-4 z-40" : "",
+      )}
+    >
+      {isSmall ? (
+        <div className="relative">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="目录"
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+          >
+            <List className="h-4 w-4" />
+          </Button>
 
-        {!collapsed ? (
-          <nav className="px-2 pb-3">
-            {headings.map((h) => {
-              const isActive = h.id === activeId;
-              return (
-                <a
-                  key={h.id}
-                  href={`#${h.id}`}
-                  className={
-                    "block rounded px-2 py-1 text-sm leading-6 " +
-                    (h.depth === 3 ? "pl-6 " : "pl-3 ") +
-                    (isActive
-                      ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50")
-                  }
+          {mobileOpen ? (
+            <div className="absolute right-0 mt-2 w-72 rounded-md border bg-card shadow-lg">
+              <div className="px-4 py-3 flex items-center justify-between gap-3">
+                <div className="text-sm font-semibold">目录</div>
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => setMobileOpen(false)}
                 >
-                  {h.title}
-                </a>
-              );
-            })}
-          </nav>
-        ) : null}
-      </div>
+                  关闭
+                </button>
+              </div>
+              <nav className="px-2 pb-3 max-h-[60vh] overflow-auto">
+                {headings.map((h) => {
+                  const isActive = h.id === activeId;
+                  return (
+                    <a
+                      key={h.id}
+                      href={`#${h.id}`}
+                      onClick={() => setMobileOpen(false)}
+                      className={
+                        "block rounded px-2 py-1 text-sm leading-6 " +
+                        (h.depth === 3 ? "pl-6 " : "pl-3 ") +
+                        (isActive
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50")
+                      }
+                    >
+                      {h.title}
+                    </a>
+                  );
+                })}
+              </nav>
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <div className="relative rounded-md border bg-card">
+          <button
+            type="button"
+            onClick={() => setCollapsed((v) => !v)}
+            aria-expanded={!collapsed}
+            className="w-full px-4 py-3 flex items-center justify-between gap-3 text-sm font-semibold"
+          >
+            <span>目录</span>
+            <span className="text-xs text-muted-foreground">
+              {collapsed ? "展开" : "收起"}
+            </span>
+          </button>
+
+          {!collapsed ? (
+            <nav className="px-2 pb-3">
+              {headings.map((h) => {
+                const isActive = h.id === activeId;
+                return (
+                  <a
+                    key={h.id}
+                    href={`#${h.id}`}
+                    className={
+                      "block rounded px-2 py-1 text-sm leading-6 " +
+                      (h.depth === 3 ? "pl-6 " : "pl-3 ") +
+                      (isActive
+                        ? "bg-muted text-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50")
+                    }
+                  >
+                    {h.title}
+                  </a>
+                );
+              })}
+            </nav>
+          ) : null}
+        </div>
+      )}
     </aside>
   );
 }

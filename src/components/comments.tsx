@@ -23,14 +23,8 @@ type CommentListResponse = {
   pageSize: number;
 };
 
-function getApiBase() {
-  return (
-    process.env.NEXT_PUBLIC_COMMENTS_API_BASE?.replace(/\/$/, "") || "/api"
-  );
-}
-
 async function fetchComments(slug: string): Promise<CommentListResponse> {
-  const url = `${getApiBase()}/comment/list?slug=${encodeURIComponent(slug)}`;
+  const url = `/api/comment/list?slug=${encodeURIComponent(slug)}`;
   const res = await fetch(url, { method: "GET" });
   if (!res.ok) throw new Error("加载评论失败");
   return res.json();
@@ -42,7 +36,7 @@ async function createComment(input: {
   parentId?: string;
   authorName?: string;
 }): Promise<{ message: string; item: CommentItem }> {
-  const url = `${getApiBase()}/comment/create`;
+  const url = `/api/comment/create`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

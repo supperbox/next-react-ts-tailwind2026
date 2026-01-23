@@ -4,50 +4,12 @@ import * as React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
-
-type CommentItem = {
-  _id: string;
-  postSlug: string;
-  content: string;
-  authorName: string;
-  parentId: string | null;
-  status: "approved" | "pending" | "spam";
-  createdAt: string;
-  updatedAt: string;
-};
-
-type CommentListResponse = {
-  items: CommentItem[];
-  total: number;
-  page: number;
-  pageSize: number;
-};
-
-async function fetchComments(slug: string): Promise<CommentListResponse> {
-  const url = `/api/comment/list?slug=${encodeURIComponent(slug)}`;
-  const res = await fetch(url, { method: "GET" });
-  if (!res.ok) throw new Error("加载评论失败");
-  return res.json();
-}
-
-async function createComment(input: {
-  slug: string;
-  content: string;
-  parentId?: string;
-  authorName?: string;
-}): Promise<{ message: string; item: CommentItem }> {
-  const url = `/api/comment/create`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(data?.message || "提交失败");
-  }
-  return data;
-}
+import {
+  createComment,
+  listComments,
+  type CommentItem,
+} from "@/service/comments";
+import { getApiErrorMessage } from "@/service/http";
 
 function getOrCreateVisitorName(): string {
   // 单次访问（同一 tab/session）保持一致：满足“多条评论同一个 id”的要求。
@@ -109,7 +71,7 @@ export function Comments({ slug }: { slug: string }) {
 
   const listQuery = useQuery({
     queryKey: ["comments", slug],
-    queryFn: () => fetchComments(slug),
+    queryFn: () => listComments(slug),
   });
 
   const createMutation = useMutation({
@@ -282,7 +244,7 @@ export function Comments({ slug }: { slug: string }) {
 
             {createMutation.error ? (
               <div className="text-sm text-destructive">
-                {(createMutation.error as Error).message}
+                {getApiErrorMessage(createMutation.error)}
               </div>
             ) : null}
 
@@ -317,7 +279,7 @@ export function Comments({ slug }: { slug: string }) {
           <div className="text-sm text-muted-foreground">加载中...</div>
         ) : listQuery.error ? (
           <div className="text-sm text-destructive">
-            {(listQuery.error as Error).message}
+            {getApiErrorMessage(listQuery.error)}
           </div>
         ) : tree.length ? (
           <div className="space-y-3">{tree.map((n) => renderNode(n))}</div>

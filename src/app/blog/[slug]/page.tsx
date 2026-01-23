@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Comments } from "@/components/comments";
 import { ReadingProgress } from "@/components/reading-progress";
 import { renderMdx } from "@/lib/mdx";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
+import { ArrowLeft } from "lucide-react";
 
 import { TableOfContents } from "./_components/table-of-contents";
 
@@ -78,6 +80,16 @@ export default async function BlogPostPage({
 
       <div className="relative px-4 sm:px-6 py-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
         <article className="min-w-0">
+          <div className="mb-4">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>返回列表</span>
+            </Link>
+          </div>
+
           <header className="space-y-3">
             <h1 className="text-3xl sm:text-4xl font-semibold leading-tight wrap-break-word text-balance">
               {post.title}
